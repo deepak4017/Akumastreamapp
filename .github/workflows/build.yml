@@ -1,7 +1,7 @@
 name: Build Akuma SMP APK
 
 on:
-  workflow_dispatch: # Yeh aapko manual Play button dega
+  workflow_dispatch:
 
 jobs:
   build:
@@ -19,20 +19,38 @@ jobs:
 
       - name: 🏗️ Setup Android Project Structure
         run: |
-          # Folders ban banana
+          # Folders banana
           mkdir -p app/src/main/java/com/akuma/stream
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/values
           
-          # Aapki files ko unke sahi kamro mein bhejna
+          # Files ko sahi jagah bhejna
           mv MainActivity.kt app/src/main/java/com/akuma/stream/ 2>/dev/null || true
           mv StreamingService.kt app/src/main/java/com/akuma/stream/ 2>/dev/null || true
           mv AndroidManifest.xml app/src/main/ 2>/dev/null || true
           mv activity_main.xml app/src/main/res/layout/ 2>/dev/null || true
           mv build.gradle app/ 2>/dev/null || true
           
-          # Root settings
-          echo "include ':app'" > settings.gradle
+          # Root settings (Google & JitPack addresses added!)
+          cat <<EOF > settings.gradle
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+              repositories {
+                  google()
+                  mavenCentral()
+                  maven { url 'https://jitpack.io' }
+              }
+          }
+          include ':app'
+          EOF
+          
           cat <<EOF > build.gradle
           plugins {
               id 'com.android.application' version '8.1.0' apply false
@@ -40,7 +58,7 @@ jobs:
           }
           EOF
           
-          # Missing resources (taaki error na aaye)
+          # Missing resources
           echo '<resources><string name="app_name">Akuma Stream</string></resources>' > app/src/main/res/values/strings.xml
           echo '<resources><color name="black">#FF000000</color><color name="white">#FFFFFFFF</color></resources>' > app/src/main/res/values/colors.xml
           echo '<resources><style name="Theme.AkumaStream" parent="android:Theme.Material.Light.NoActionBar" /></resources>' > app/src/main/res/values/themes.xml
