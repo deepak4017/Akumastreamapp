@@ -19,19 +19,16 @@ jobs:
 
       - name: 🏗️ Setup Android Project Structure
         run: |
-          # Folders banana
           mkdir -p app/src/main/java/com/akuma/stream
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/values
           
-          # Files ko sahi jagah bhejna
           mv MainActivity.kt app/src/main/java/com/akuma/stream/ 2>/dev/null || true
           mv StreamingService.kt app/src/main/java/com/akuma/stream/ 2>/dev/null || true
           mv AndroidManifest.xml app/src/main/ 2>/dev/null || true
           mv activity_main.xml app/src/main/res/layout/ 2>/dev/null || true
           mv build.gradle app/ 2>/dev/null || true
           
-          # Root settings (Google & JitPack addresses added!)
           cat <<EOF > settings.gradle
           pluginManagement {
               repositories {
@@ -58,14 +55,15 @@ jobs:
           }
           EOF
           
-          # Missing resources
+          echo "android.useAndroidX=true" > gradle.properties
+          
           echo '<resources><string name="app_name">Akuma Stream</string></resources>' > app/src/main/res/values/strings.xml
           echo '<resources><color name="black">#FF000000</color><color name="white">#FFFFFFFF</color></resources>' > app/src/main/res/values/colors.xml
           echo '<resources><style name="Theme.AkumaStream" parent="android:Theme.Material.Light.NoActionBar" /></resources>' > app/src/main/res/values/themes.xml
 
       - name: 🚀 Build the APK
         run: |
-          gradle wrapper
+          gradle wrapper --gradle-version 8.4
           ./gradlew assembleDebug
 
       - name: 📦 Upload APK file
