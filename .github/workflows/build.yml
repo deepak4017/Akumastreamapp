@@ -17,18 +17,19 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: 🏗️ Setup Android Project Structure
+      - name: 🏗️ Setup Android Project
         run: |
           mkdir -p app/src/main/java/com/akuma/stream
           mkdir -p app/src/main/res/layout
           mkdir -p app/src/main/res/values
           
+          # Claude ki Kotlin aur XML files ko sahi jagah bhejo
           mv MainActivity.kt app/src/main/java/com/akuma/stream/ 2>/dev/null || true
           mv StreamingService.kt app/src/main/java/com/akuma/stream/ 2>/dev/null || true
           mv AndroidManifest.xml app/src/main/ 2>/dev/null || true
           mv activity_main.xml app/src/main/res/layout/ 2>/dev/null || true
-          mv build.gradle app/ 2>/dev/null || true
           
+          # ROOT SETTINGS (Perfected)
           cat <<EOF > settings.gradle
           pluginManagement {
               repositories {
@@ -48,25 +49,51 @@ jobs:
           include ':app'
           EOF
           
+          # ROOT BUILD (Perfected)
           cat <<EOF > build.gradle
           plugins {
-              id 'com.android.application' version '8.1.0' apply false
-              id 'org.jetbrains.kotlin.android' version '1.9.0' apply false
+              id 'com.android.application' version '8.2.0' apply false
+              id 'org.jetbrains.kotlin.android' version '1.9.20' apply false
           }
           EOF
           
-          echo "android.useAndroidX=true" > gradle.properties
+          # CLAUDE KI GALAT FILE KO REPLACE KARNA (The Ultimate Fix)
+          cat <<EOF > app/build.gradle
+          plugins {
+              id 'com.android.application'
+              id 'org.jetbrains.kotlin.android'
+          }
+          android {
+              namespace 'com.akuma.stream'
+              compileSdk 34
+              defaultConfig {
+                  applicationId "com.akuma.stream"
+                  minSdk 24
+                  targetSdk 34
+                  versionCode 1
+                  versionName "1.0"
+              }
+          }
+          dependencies {
+              implementation 'androidx.core:core-ktx:1.12.0'
+              implementation 'androidx.appcompat:appcompat:1.6.1'
+              implementation 'com.google.android.material:material:1.11.0'
+              implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+              implementation 'com.github.pedroSG94.RootEncoder:library:2.4.6'
+          }
+          EOF
           
+          # Missing resources add karna
           echo '<resources><string name="app_name">Akuma Stream</string></resources>' > app/src/main/res/values/strings.xml
           echo '<resources><color name="black">#FF000000</color><color name="white">#FFFFFFFF</color></resources>' > app/src/main/res/values/colors.xml
           echo '<resources><style name="Theme.AkumaStream" parent="android:Theme.Material.Light.NoActionBar" /></resources>' > app/src/main/res/values/themes.xml
 
-      - name: 🚀 Build the APK
+      - name: 🚀 Build APK
         run: |
           gradle wrapper --gradle-version 8.4
           ./gradlew assembleDebug
 
-      - name: 📦 Upload APK file
+      - name: 📦 Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: AkumaStream-App
