@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.akumasmp.streamer">
+
+    <!-- ================================================================== -->
+    <!-- Network                                                              -->
+    <!-- ================================================================== -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- ================================================================== -->
+    <!-- Audio capture                                                        -->
+    <!-- ================================================================== -->
+    <!-- Microphone (runtime permission — requested if mic/both selected)    -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- ================================================================== -->
+    <!-- Foreground service + screen capture                                 -->
+    <!-- ================================================================== -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!--
+        REQUIRED on Android 14 (API 34+).
+        Any foreground service using MediaProjection must declare
+        foregroundServiceType="mediaProjection" here AND in the
+        <service> tag below, or the app crashes with IllegalStateException.
+    -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+
+    <!-- ================================================================== -->
+    <!-- System                                                               -->
+    <!-- ================================================================== -->
+    <!-- Keeps CPU alive during stream -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- Required on Android 13+ (API 33+) to show the streaming notification -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- ================================================================== -->
+    <!-- Application                                                          -->
+    <!-- ================================================================== -->
+    <application
+        android:name=".AkumaApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AkumaSMP"
+        android:hardwareAccelerated="true"
+        tools:targetApi="34">
+
+        <!-- ============================================================== -->
+        <!-- Main Activity                                                    -->
+        <!-- ============================================================== -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- ============================================================== -->
+        <!-- Streaming Foreground Service                                     -->
+        <!--                                                                  -->
+        <!-- foregroundServiceType="mediaProjection" is MANDATORY on API 34+ -->
+        <!-- Without it the system throws:                                    -->
+        <!--   "Starting FGS with type mediaProjection requires permission    -->
+        <!--    FOREGROUND_SERVICE_MEDIA_PROJECTION"                          -->
+        <!-- ============================================================== -->
+        <service
+            android:name=".StreamingService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection"
+            android:stopWithTask="false" />
+
+    </application>
+
+</manifest>

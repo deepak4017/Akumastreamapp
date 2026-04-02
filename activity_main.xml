@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    activity_main.xml
+    Akuma SMP Streaming App — Main Screen
+
+    Layout structure:
+    ┌─────────────────────────────┐
+    │  Header + LIVE badge        │
+    │  Platform toggle (YT/Twitch)│
+    │  RTMP URL input             │
+    │  Stream Key input           │
+    │─────────────────────────────│
+    │  Settings group:            │
+    │   · Resolution radio group  │
+    │   · Bitrate display         │
+    │   · Audio source radio      │
+    │─────────────────────────────│
+    │  Go Live / Stop button      │
+    └─────────────────────────────┘
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="32dp"
+        android:paddingBottom="32dp">
+
+        <!-- ================================================================ -->
+        <!-- Header                                                            -->
+        <!-- ================================================================ -->
+        <ImageView
+            android:id="@+id/imgLogo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@mipmap/ic_launcher_round"
+            android:contentDescription="Akuma SMP logo"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tvAppTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Akuma SMP"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:layout_marginStart="12dp"
+            app:layout_constraintTop_toTopOf="@id/imgLogo"
+            app:layout_constraintBottom_toTopOf="@id/tvSubtitle"
+            app:layout_constraintStart_toEndOf="@id/imgLogo"
+            app:layout_constraintEnd_toStartOf="@id/liveBadge" />
+
+        <TextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Live Streaming"
+            android:textSize="13sp"
+            android:textColor="@color/text_secondary"
+            app:layout_constraintTop_toBottomOf="@id/tvAppTitle"
+            app:layout_constraintStart_toStartOf="@id/tvAppTitle"
+            app:layout_constraintEnd_toStartOf="@id/liveBadge" />
+
+        <!-- LIVE badge — shown only while streaming -->
+        <TextView
+            android:id="@+id/liveBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="● LIVE"
+            android:textSize="11sp"
+            android:textColor="@color/live_white"
+            android:background="@drawable/bg_live_badge"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@id/imgLogo"
+            app:layout_constraintBottom_toBottomOf="@id/imgLogo"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible" />
+
+        <!-- Divider -->
+        <View
+            android:id="@+id/dividerHeader"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/divider"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@id/imgLogo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- ================================================================ -->
+        <!-- Platform toggle                                                   -->
+        <!-- ================================================================ -->
+        <TextView
+            android:id="@+id/tvPlatformLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Platform"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:textAllCaps="true"
+            android:letterSpacing="0.08"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/dividerHeader"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/layoutPlatformToggle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:gravity="start"
+            app:layout_constraintTop_toBottomOf="@id/tvPlatformLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <Button
+                android:id="@+id/btnYoutube"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="YouTube"
+                android:textSize="13sp"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnTwitch"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Twitch"
+                android:textSize="13sp"
+                android:alpha="0.45" />
+        </LinearLayout>
+
+        <!-- ================================================================ -->
+        <!-- RTMP Server URL                                                   -->
+        <!-- ================================================================ -->
+        <TextView
+            android:id="@+id/tvServerLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RTMP Server URL"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:textAllCaps="true"
+            android:letterSpacing="0.08"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@id/layoutPlatformToggle"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilServerUrl"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:hint="rtmp://a.rtmp.youtube.com/live2"
+            app:layout_constraintTop_toBottomOf="@id/tvServerLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etServerUrl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textUri"
+                android:imeOptions="actionNext"
+                android:singleLine="true"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ================================================================ -->
+        <!-- Stream Key                                                        -->
+        <!-- ================================================================ -->
+        <TextView
+            android:id="@+id/tvKeyLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stream Key"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:textAllCaps="true"
+            android:letterSpacing="0.08"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/tilServerUrl"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilStreamKey"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:hint="Paste your stream key"
+            app:layout_constraintTop_toBottomOf="@id/tvKeyLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnToggleKey">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etStreamKey"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btnToggleKey"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="64dp"
+            android:layout_height="56dp"
+            android:text="Show"
+            android:textSize="12sp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toTopOf="@id/tilStreamKey"
+            app:layout_constraintBottom_toBottomOf="@id/tilStreamKey"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- ================================================================ -->
+        <!-- Settings Group (hidden while live)                               -->
+        <!-- ================================================================ -->
+        <LinearLayout
+            android:id="@+id/settingsGroup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@id/tilStreamKey"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Resolution -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Resolution"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
+                android:textAllCaps="true"
+                android:letterSpacing="0.08"
+                android:layout_marginBottom="8dp" />
+
+            <RadioGroup
+                android:id="@+id/rgResolution"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+
+                <RadioButton
+                    android:id="@+id/rb1080p"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1080p"
+                    android:checked="true"
+                    android:layout_marginEnd="16dp"
+                    android:textSize="14sp" />
+
+                <RadioButton
+                    android:id="@+id/rb720p"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="720p"
+                    android:layout_marginEnd="16dp"
+                    android:textSize="14sp" />
+
+                <RadioButton
+                    android:id="@+id/rb480p"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="480p"
+                    android:textSize="14sp" />
+            </RadioGroup>
+
+            <!-- Audio Source -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Audio Source"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
+                android:textAllCaps="true"
+                android:letterSpacing="0.08"
+                android:layout_marginBottom="8dp" />
+
+            <RadioGroup
+                android:id="@+id/rgAudio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <RadioButton
+                    android:id="@+id/rbInternal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Internal"
+                    android:checked="true"
+                    android:layout_marginEnd="16dp"
+                    android:textSize="14sp" />
+
+                <RadioButton
+                    android:id="@+id/rbMic"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mic"
+                    android:layout_marginEnd="16dp"
+                    android:textSize="14sp" />
+
+                <RadioButton
+                    android:id="@+id/rbBoth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Both"
+                    android:textSize="14sp" />
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Internal audio captures Minecraft game sounds. Mic adds your voice. Both mixes them."
+                android:textSize="12sp"
+                android:textColor="@color/text_tertiary"
+                android:lineSpacingMultiplier="1.4"
+                android:layout_marginBottom="8dp" />
+
+        </LinearLayout>
+
+        <!-- ================================================================ -->
+        <!-- Go Live button                                                    -->
+        <!-- ================================================================ -->
+        <Button
+            android:id="@+id/btnGoLive"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:text="Go Live"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/live_white"
+            android:backgroundTint="@color/live_green"
+            android:layout_marginTop="24dp"
+            android:stateListAnimator="@null"
+            app:cornerRadius="12dp"
+            app:layout_constraintTop_toBottomOf="@id/settingsGroup"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Footer note -->
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Stream keys are stored encrypted on your device and never sent anywhere except the RTMP server you specify."
+            android:textSize="11sp"
+            android:textColor="@color/text_tertiary"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.4"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/btnGoLive"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
